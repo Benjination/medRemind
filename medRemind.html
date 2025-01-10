@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medication Reminder PWA</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        #todayReminders, #medicationList {
+            margin-top: 20px;
+        }
+        .medication-item, .reminder-item {
+            background-color: #f0f0f0;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .delete-btn {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            float: right;
+        }
+        .taken {
+            background-color: #90EE90;
+            text-decoration: line-through;
+        }
+        form {
+            margin-top: 20px;
+        }
+        input, button {
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+        nav {
+            margin-bottom: 20px;
+        }
+        nav a {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Medication Reminder</h1>
+    <nav>
+        <a href="#" id="todayLink">Today's Reminders</a>
+        <a href="#" id="allMedicationsLink">All Medications</a>
+    </nav>
+    <div id="todayReminders"></div>
+    <div id="medicationList"></div>
+    <form id="addMedicationForm">
+        <input type="text" id="medicationName" placeholder="Medication name" required>
+        <input type="time" id="reminderTime" required>
+        <button type="submit">Add Medication</button>
+    </form>
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/serviceworker.js');
+        }
+    </script>
+</body>
+</html>
