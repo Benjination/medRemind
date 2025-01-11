@@ -7,6 +7,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let medications = JSON.parse(localStorage.getItem('medications')) || [];
 
+    // Request notification permission
+    if ('Notification' in window) {
+        Notification.requestPermission().then(function(permission) {
+            if (permission === 'granted') {
+                console.log('Notification permission granted');
+            }
+        });
+    }
+
     function renderTodayReminders() {
         todayReminders.innerHTML = '<h2>Today\'s Reminders</h2>';
         const today = new Date().toLocaleDateString();
@@ -69,10 +78,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (scheduleTime > now) {
             const timeUntilNotification = scheduleTime.getTime() - now.getTime();
             setTimeout(() => {
-                if (Notification.permission === "granted") {
-                    new Notification(`Time to take ${med.name}`, {
-                        body: `It's time to take your medication: ${med.name}`,
-                        icon: '/icon-192x192.png'
+                if ('serviceWorker' in navigator && 'PushManager' in window) {
+                    navigator.serviceWorker.ready.then(function(registration) {
+                        registration.showNotification('Medication Reminder', {
+                            body: `It's time to take your medication: ${med.name}`,
+                            icon: '/icon-192x192.png'
+                        });
                     });
                 }
             }, timeUntilNotification);
@@ -103,14 +114,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Request notification permission
-    Notification.requestPermission().then(function(result) {
-        console.log(result);
-    });
+  // Schedule notifications for all medications
+  medications.forEach(scheduleNotification);
 
-    // Schedule notifications for all medications
-    medications.forEach(scheduleNotification);
-
-    // Initial render
-    showTodayReminders();
+  // Initial render
+  showTodayReminders();
 });
