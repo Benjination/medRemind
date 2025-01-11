@@ -6,7 +6,6 @@ const urlsToCache = [
   '/manifest.json',
   '/icon-192x192.png',
   '/icon-512x512.png'
-  // Add any other assets your app uses
 ];
 
 self.addEventListener('install', (event) => {
