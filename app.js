@@ -32,14 +32,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             todayReminders.style.display = 'block';
             todayReminders.innerHTML = '<h2>Today\'s Reminders</h2>';
-            todayMeds.forEach((med, index) => {
+            todayMeds.forEach((med) => {
                 const reminderItem = document.createElement('div');
                 reminderItem.classList.add('reminder-item');
                 if (med.taken) reminderItem.classList.add('taken');
                 reminderItem.innerHTML = `
                     <span>${med.name} - ${med.time}</span>
                 `;
-                reminderItem.addEventListener('click', () => toggleMedicationTaken(index));
+                reminderItem.addEventListener('click', () => toggleMedicationTaken(med));
                 todayReminders.appendChild(reminderItem);
             });
         }
@@ -63,8 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function toggleMedicationTaken(index) {
-        medications[index].taken = !medications[index].taken;
+    function toggleMedicationTaken(med) {
+        med.taken = !med.taken;
         localStorage.setItem('medications', JSON.stringify(medications));
         renderTodayReminders();
     }
@@ -88,9 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }, timeUntilNotification);
         }
     }
-
-    todayLink.addEventListener('click', showTodayReminders);
-    allMedicationsLink.addEventListener('click', showAllMedications);
 
     addMedicationForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -126,4 +123,12 @@ document.addEventListener('DOMContentLoaded', () => {
     medications.forEach(scheduleNotification);
     renderMedicationList();
     renderTodayReminders();
+
+    // Add these console logs for debugging
+    console.log('Medications:', medications);
+    console.log('Today\'s medications:', medications.filter(med => {
+        const medDate = new Date();
+        medDate.setHours(med.time.split(':')[0], med.time.split(':')[1]);
+        return medDate.toLocaleDateString() === new Date().toLocaleDateString();
+    }));
 });
