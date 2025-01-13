@@ -2,7 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const todayReminders = document.getElementById('todayReminders');
     const medicationList = document.getElementById('medicationList');
     const addMedicationForm = document.getElementById('addMedicationForm');
-
+    
+    checkNewDay();
     
     
     let medications = [];
@@ -20,6 +21,35 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    function resetTakenStatus() {
+        let updated = false;
+        medications = medications.map(med => {
+            if (med.taken) {
+                updated = true;
+                return { ...med, taken: false };
+            }
+            return med;
+        });
+        if (updated) {
+            localStorage.setItem('medications', JSON.stringify(medications));
+            renderTodayReminders();
+            renderMedicationList();
+        }
+    }
+
+    function checkNewDay() {
+        const now = new Date();
+        const lastChecked = localStorage.getItem('lastChecked');
+        if (lastChecked) {
+            const lastDate = new Date(parseInt(lastChecked));
+            if (lastDate.getDate() !== now.getDate() || lastDate.getMonth() !== now.getMonth() || lastDate.getFullYear() !== now.getFullYear()) {
+                resetTakenStatus();
+            }
+        }
+        localStorage.setItem('lastChecked', now.getTime().toString());
+    }
+    
 
     function renderTodayReminders() {
         const today = new Date().toLocaleDateString();
@@ -133,7 +163,12 @@ document.addEventListener('DOMContentLoaded', () => {
     renderMedicationList();
     renderTodayReminders();
 
-    // Add these console logs for debugging
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            checkNewDay();
+        }
+    });
+
     console.log('Medications:', medications);
     console.log('Today\'s medications:', medications.filter(med => {
         const medDate = new Date();
