@@ -22,42 +22,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderTodayReminders() {
-        const today = new Date().toLocaleDateString();
-        const todayMeds = medications.filter(med => {
-            const medDate = new Date();
-            medDate.setHours(med.time.split(':')[0], med.time.split(':')[1]);
-            return medDate.toLocaleDateString() === today;
-        }).sort((a, b) => {
-            // Convert times to comparable format
-            const timeA = a.time.split(':').map(Number);
-            const timeB = b.time.split(':').map(Number);
-            
-            // Compare hours first, then minutes - but in descending order
-            if (timeA[0] !== timeB[0]) {
-                return timeB[0] - timeA[0];  // Reversed from previous version
-            }
-            return timeB[1] - timeA[1];  // Reversed from previous version
-        });
-    
-        if (todayMeds.length === 0) {
-            todayReminders.style.display = 'none';
-        } else {
-            todayReminders.style.display = 'block';
-            todayReminders.innerHTML = '<h2>Today\'s Reminders</h2>';
-            todayMeds.forEach((med) => {
-                const reminderItem = document.createElement('div');
-                reminderItem.classList.add('reminder-item');
-                if (med.taken) reminderItem.classList.add('taken');
-                reminderItem.innerHTML = `
-                    <span>${med.name} - ${med.time}</span>
-                `;
-                reminderItem.addEventListener('click', () => toggleMedicationTaken(med));
-                todayReminders.appendChild(reminderItem);
-            });
+    const today = new Date().toLocaleDateString();
+    const todayMeds = medications.filter(med => {
+        const medDate = new Date();
+        medDate.setHours(med.time.split(':')[0], med.time.split(':')[1]);
+        return medDate.toLocaleDateString() === today;
+    }).sort((a, b) => {
+        // Convert times to comparable format
+        const timeA = a.time.split(':').map(Number);
+        const timeB = b.time.split(':').map(Number);
+        
+        // Compare hours first, then minutes
+        if (timeA[0] !== timeB[0]) {
+            return timeA[0] - timeB[0];
         }
+        return timeA[1] - timeB[1];
+    });
+
+    if (todayMeds.length === 0) {
+        todayReminders.style.display = 'none';
+    } else {
+        todayReminders.style.display = 'block';
+        todayReminders.innerHTML = '<h2>Today\'s Reminders</h2>';
+        todayMeds.forEach((med) => {
+            const reminderItem = document.createElement('div');
+            reminderItem.classList.add('reminder-item');
+            if (med.taken) reminderItem.classList.add('taken');
+            reminderItem.innerHTML = `
+                <span>${med.name} - ${med.time}</span>
+            `;
+            reminderItem.addEventListener('click', () => toggleMedicationTaken(med));
+            todayReminders.appendChild(reminderItem);
+        });
     }
-    
-    
+}
+
 
     function renderMedicationList() {
         if (medications.length === 0) {
