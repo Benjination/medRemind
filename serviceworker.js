@@ -15,13 +15,6 @@ self.addEventListener('install', (event) => {
   );
 });
 
-self.addEventListener('notificationclick', function(event) {
-  event.notification.close();
-  event.waitUntil(
-      clients.openWindow('/')
-  );
-});
-
 
 
 self.addEventListener('fetch', (event) => {
@@ -54,20 +47,12 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('push', function(event) {
-  let options = {
-    body: 'Time to take your medication!',
-    icon: '/icon-192x192.png'
-  };
-
-  if (event.data) {
-    const payload = event.data.json();
-    options = {
-      ...options,
-      ...payload
+    const options = {
+      body: event.data.text(),
+      icon: '/icon-192x192.png'
     };
-  }
-
-  event.waitUntil(
-    self.registration.showNotification('Medication Reminder', options)
-  );
-});
+  
+    event.waitUntil(
+      self.registration.showNotification('Medication Reminder', options)
+    );
+  });
