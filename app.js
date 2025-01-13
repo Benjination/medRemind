@@ -27,18 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const medDate = new Date();
             medDate.setHours(med.time.split(':')[0], med.time.split(':')[1]);
             return medDate.toLocaleDateString() === today;
-        }).sort((a, b) => {
-            // Convert times to comparable format
-            const timeA = a.time.split(':').map(Number);
-            const timeB = b.time.split(':').map(Number);
-            
-            // Compare hours first, then minutes - but in descending order
-            if (timeA[0] !== timeB[0]) {
-                return timeB[0] - timeA[0];  // Reversed from previous version
-            }
-            return timeB[1] - timeA[1];  // Reversed from previous version
         });
-    
+
         if (todayMeds.length === 0) {
             todayReminders.style.display = 'none';
         } else {
@@ -56,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
-    
 
     function renderMedicationList() {
         if (medications.length === 0) {
