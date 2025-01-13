@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const todayReminders = document.getElementById('todayReminders');
     const medicationList = document.getElementById('medicationList');
     const addMedicationForm = document.getElementById('addMedicationForm');
+
+    medications.forEach(scheduleNotification);
     
     let medications = [];
     try {
@@ -25,8 +27,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const medDate = new Date();
             medDate.setHours(med.time.split(':')[0], med.time.split(':')[1]);
             return medDate.toLocaleDateString() === today;
+        }).sort((a, b) => {
+            // Convert times to comparable format
+            const timeA = a.time.split(':').map(Number);
+            const timeB = b.time.split(':').map(Number);
+            
+            // Compare hours first, then minutes
+            if (timeA[0] !== timeB[0]) {
+                return timeA[0] - timeB[0];
+            }
+            return timeA[1] - timeB[1];
         });
-
+    
         if (todayMeds.length === 0) {
             todayReminders.style.display = 'none';
         } else {
@@ -44,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
+    
 
     function renderMedicationList() {
         if (medications.length === 0) {
@@ -77,17 +90,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (scheduleTime > now) {
             const timeUntilNotification = scheduleTime.getTime() - now.getTime();
             setTimeout(() => {
-                if ('serviceWorker' in navigator && 'PushManager' in window) {
-                    navigator.serviceWorker.ready.then(function(registration) {
-                        registration.showNotification('Medication Reminder', {
-                            body: `It's time to take your medication: ${med.name}`,
-                            icon: '/icon-192x192.png'
-                        });
-                    });
-                }
+                new Notification('Medication Reminder', {
+                    body: `It's time to take your medication: ${med.name}`,
+                    icon: '/icon-192x192.png'
+                });
             }, timeUntilNotification);
         }
     }
+    
 
     addMedicationForm.addEventListener('submit', (e) => {
         e.preventDefault();
