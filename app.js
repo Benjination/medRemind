@@ -145,19 +145,19 @@ document.addEventListener('DOMContentLoaded', () => {
         scheduleNotification(newMed);
     });
 
-    // medicationList.addEventListener('click', (e) => {
-    //     if (e.target.classList.contains('delete-btn')) {
-    //         const index = e.target.getAttribute('data-index');
-    //         medications.splice(index, 1);
-    //         try {
-    //             localStorage.setItem('medications', JSON.stringify(medications));
-    //         } catch (error) {
-    //             console.error('Error saving medications to localStorage:', error);
-    //         }
-    //         renderMedicationList();
-    //         renderTodayReminders();
-    //     }
-    // });
+    medicationList.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-btn')) {
+            const index = e.target.getAttribute('data-index');
+            medications.splice(index, 1);
+            try {
+                localStorage.setItem('medications', JSON.stringify(medications));
+            } catch (error) {
+                console.error('Error saving medications to localStorage:', error);
+            }
+            renderMedicationList();
+            renderTodayReminders();
+        }
+    });
 
     medications.forEach(scheduleNotification);
     renderMedicationList();
